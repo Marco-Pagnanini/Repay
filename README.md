@@ -19,9 +19,9 @@ Repay è un'app mobile per tracciare i tuoi abbonamenti ricorrenti. Tieni sotto 
 - **Expo Notifications** per le notifiche locali
 
 ## Architettura
-<img width="673" height="539" alt="Screenshot 2026-03-25 alle 00 30 58" src="https://github.com/user-attachments/assets/9b6893ac-ccfd-4b00-8070-d376ada2d9fc" />
-
 Il progetto segue un'architettura ispirata a **CQRS** con tre tabelle principali:
+
+<img width="673" height="539" alt="Screenshot 2026-03-25 alle 00 30 58" src="https://github.com/user-attachments/assets/9b6893ac-ccfd-4b00-8070-d376ada2d9fc" />
 
 - `subscriptions` — master data degli abbonamenti attivi
 - `transactions` — log immutabile di ogni rinnovo avvenuto
