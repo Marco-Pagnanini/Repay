@@ -1,18 +1,45 @@
 import CardAmount from "@/components/CardAmount";
 import TransactionCard from "@/components/TransactionCard";
+import * as schema from "@/db/schema";
+import { drizzle } from "drizzle-orm/expo-sqlite";
 import { BlurView } from "expo-blur";
-import { useState } from "react";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
+import { useSQLiteContext } from "expo-sqlite";
+import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
+const transactionsData = [
+  { id: 1,name:"Notion", amount: 11.95, date: new Date(), type: 1 },
+  { id: 2,name:"Claude Code", amount: 10.98, date: new Date(), type: 1 },
+  { id: 3,name:"Notion", amount: 2.95, date: new Date(), type: -1 },
+];
 
 export default function Index() {
-  const [balance, setBalance] = useState<number>(1000.50);
 
-  const transactionsData = [
-    { id: 1,name:"Notion", amount: 11.95, date: new Date(), type: 1 },
-    { id: 2,name:"Claude Code", amount: 10.98, date: new Date(), type: 1 },
-    { id: 3,name:"Notion", amount: 2.95, date: new Date(), type: -1 },
-  ];
+
+  const db = useSQLiteContext();
+  const drizzleDb = drizzle(db, {schema})
+  useDrizzleStudio(db)
+
+  const [balance, setBalance] = useState<number>(1000.50);
+  const [totalAmount, setTotalAmount] = useState<number>(0)
+
+  useEffect( () => {
+    const load = async ()=>{
+      const result = await drizzleDb.query.amount.findFirst()
+      setBalance(result? result.totalAmount : 0);
+    } 
+
+    load()
+
+  }, [])
+  
+
+
+  
+  
+
+
 
   return (
     <View style={styles.root}>
