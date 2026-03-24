@@ -3,6 +3,7 @@ import { loadSubcriptions } from '@/services/storage'
 import { Subscription } from '@/types/Subscription'
 import { Ionicons } from '@expo/vector-icons'
 import { BlurView } from 'expo-blur'
+import { router } from 'expo-router'
 import React, { useEffect, useState } from 'react'
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -25,7 +26,7 @@ const Subscriptions = () => {
                 <View style={styles.header}>
                     <Text style={styles.title}>Abbonamenti</Text>
                     <TouchableOpacity style={styles.addButton}>
-                        <Ionicons name="add" size={20} color="rgba(255,255,255,0.9)" />
+                        <Ionicons name="add" size={20} color="rgba(255,255,255,0.9)" onPress={() =>{router.push('/add-subscription')}}/>
                     </TouchableOpacity>
                 </View>
 
