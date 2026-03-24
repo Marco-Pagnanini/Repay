@@ -1,11 +1,12 @@
 import CardAmount from "@/components/CardAmount";
 import TransactionCard from "@/components/TransactionCard";
 import { sqlite } from "@/db/database";
-import { loadTotalAmount, loadTransaction } from "@/services/storage";
+import { loadMonthlyTotal, loadMonthlyTransactions, loadTotalAmount } from "@/services/storage";
 import { Transaction } from "@/types/Transaction";
 import { BlurView } from "expo-blur";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 const transactionsData = [
@@ -21,12 +22,15 @@ export default function Index() {
 
   const [transactions, setTransactions] = useState<Transaction[]>()
   const [balance, setBalance] = useState<number>(0.00);
+  const [total, setTotal] = useState<number>(0)
 
-  useEffect( () => {
-    loadTotalAmount().then(setBalance);
-    loadTransaction().then(setTransactions)
-
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      loadMonthlyTotal().then(setBalance);
+      loadMonthlyTransactions().then(setTransactions);
+      loadTotalAmount().then(setTotal)
+    }, [])
+  );
 
   return (
     <View style={styles.root}>
@@ -45,7 +49,7 @@ export default function Index() {
         </View>
 
         <View style={styles.cardAmount}>
-          <CardAmount balance={balance} />
+          <CardAmount balance={balance} total={total}/>
         </View>
 
         <FlatList

@@ -1,20 +1,22 @@
 import { useEffect, useRef } from 'react';
 import {
-    Animated,
-    StyleSheet,
-    Text,
-    View,
+  Animated,
+  StyleSheet,
+  Text,
+  View,
 } from 'react-native';
 
 interface CreditCardProps {
   balance: number;
+  total: number;
   cardHolder?: string;
   cardNumber?: string;
   expiryDate?: string;
 }
 
 export default function CreditCard({
-  balance = 1247.5,
+  balance = 0,
+  total = 0,
   cardHolder = 'Marco Pagnanini',
   cardNumber = '4242 4242 4242 4242',
   expiryDate = '12/27',
@@ -39,10 +41,6 @@ export default function CreditCard({
     ]).start();
   }, []);
 
-  const maskedNumber = cardNumber
-    .split(' ')
-    .map((group, i) => (i < 3 ? '••••' : group))
-    .join('  ');
 
   return (
     <Animated.View
@@ -80,7 +78,7 @@ export default function CreditCard({
       </View>
 
       {/* card number */}
-      <Text style={styles.cardNumber}>{maskedNumber}</Text>
+      <Text style={styles.cardNumber}>Total Amount : {total}</Text>
 
       {/* decorative circles */}
       <View style={styles.circle1} />

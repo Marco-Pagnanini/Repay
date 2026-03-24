@@ -1,5 +1,6 @@
 // _layout.tsx
 import { runMigrations } from "@/db/migrations";
+import { processAllRenewals } from "@/services/renewalService";
 import { DMMono_400Regular } from "@expo-google-fonts/dm-mono";
 import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces";
 import { Inter_400Regular, Inter_500Medium } from "@expo-google-fonts/inter";
@@ -13,7 +14,12 @@ export default function RootLayout() {
   const [ready, setReady] = useState<boolean>(false);
 
   useEffect(() => {
-    runMigrations().then(() => setReady(true));
+    const init = async () => {
+        await runMigrations();
+        await processAllRenewals();
+        setReady(true);
+      };
+      init();
   }, []);
 
   const [loaded] = useFonts({
@@ -36,7 +42,8 @@ export default function RootLayout() {
            <Stack.Screen
             name="add-subscription"
             options={{
-              presentation: 'modal',
+              presentation: 'formSheet',
+              sheetAllowedDetents: [0.45, 0.70],
               headerShown: false,
             }}
           />
