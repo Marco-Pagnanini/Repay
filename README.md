@@ -1,57 +1,96 @@
-# Welcome to your Expo app 👋
+# Repay
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Repay è un'app mobile per tracciare i tuoi abbonamenti ricorrenti. Tieni sotto controllo quanto spendi ogni mese, visualizza lo storico dei rinnovi e ricevi notifiche prima di ogni scadenza.
 
-## Get started
+## Features
 
-1. Install dependencies
+- Aggiunta e gestione abbonamenti (mensile, settimanale, annuale)
+- Calcolo automatico del totale speso nel mese corrente
+- Rinnovi automatici — ad ogni avvio l'app calcola le transazioni mancanti
+- Storico transazioni filtrato per mese
+- Notifiche prima del rinnovo
+- Design dark ispirato a Revolut e Notion
 
-   ```bash
-   npm install
-   ```
+## Stack
 
-2. Start the app
+- **React Native** con Expo SDK 55
+- **Expo Router** per la navigazione (file-based routing)
+- **Drizzle ORM** + **Expo SQLite** per il database locale
+- **Expo Blur** per gli effetti di sfondo
+- **Expo Notifications** per le notifiche locali
 
-   ```bash
-   npx expo start
-   ```
+## Architettura
 
-In the output, you'll find options to open the app in a
+Il progetto segue un'architettura ispirata a **CQRS** con tre tabelle principali:
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- `subscriptions` — master data degli abbonamenti attivi
+- `transactions` — log immutabile di ogni rinnovo avvenuto
+- `amount` — proiezione del totale speso aggregato
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Le scritture avvengono sempre tramite command functions nel layer `services/`, le letture tramite query separate ottimizzate per ogni schermata.
 
-## Get a fresh project
+## Struttura
 
-When you're ready, run:
+```
+app/
+  (tabs)/
+    _layout.tsx         tab bar
+    index.tsx           home — totale mensile e transazioni
+    subscriptions.tsx   lista abbonamenti attivi
+  _layout.tsx           root layout — migrations e provider
+  add-subscription.tsx  modal aggiunta abbonamento
 
-```bash
-npm run reset-project
+components/
+  CardAmount.tsx        card saldo con fade-in
+  TransactionCard.tsx   riga transazione
+  SubscriptionCard.tsx  card abbonamento
+
+db/
+  schema.ts             definizione tabelle Drizzle
+  database.ts           client SQLite singleton
+  migrations.ts         creazione tabelle al primo avvio
+
+services/
+  storage.ts            query e command
+  renewalService.ts     logica rinnovi automatici
+
+types/
+  Subscription.ts
+  Transaction.ts
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Avvio
 
-### Other setup steps
+### Requisiti
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+- Node.js >= 20.19.4
+- Expo CLI
+- iOS Simulator (Xcode) o dispositivo fisico con Expo Go
 
-## Learn more
+### Installazione
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+git clone https://github.com/tuo-username/repay.git
+cd repay
+npm install
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Avvio
 
-## Join the community
+```bash
+npx expo start
+```
 
-Join our community of developers creating universal apps.
+Premi `i` per aprire il simulatore iOS o scansiona il QR code con Expo Go.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-# Repay
+## Font
+
+L'app usa tre font da Google Fonts:
+
+- **Fraunces** — titoli e heading
+- **Inter** — corpo testo e label
+- **DM Mono** — valori monetari e numeri
+
+## Note
+
+Il database SQLite viene creato automaticamente al primo avvio sul device. Non è necessaria nessuna configurazione aggiuntiva — le tabelle vengono create tramite `runMigrations()` nel layout root prima che qualsiasi schermata venga renderizzata.
