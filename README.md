@@ -9,7 +9,6 @@ Repay è un'app mobile per tracciare i tuoi abbonamenti ricorrenti. Tieni sotto 
 - Rinnovi automatici — ad ogni avvio l'app calcola le transazioni mancanti
 - Storico transazioni filtrato per mese
 - Notifiche prima del rinnovo
-- Design dark ispirato a Revolut e Notion
 
 ## Stack
 
