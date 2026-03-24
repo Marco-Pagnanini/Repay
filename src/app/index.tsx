@@ -1,45 +1,32 @@
 import CardAmount from "@/components/CardAmount";
 import TransactionCard from "@/components/TransactionCard";
-import * as schema from "@/db/schema";
-import { drizzle } from "drizzle-orm/expo-sqlite";
+import { sqlite } from "@/db/database";
+import { loadTotalAmount, loadTransaction } from "@/services/storage";
+import { Transaction } from "@/types/Transaction";
 import { BlurView } from "expo-blur";
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-import { useSQLiteContext } from "expo-sqlite";
 import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 const transactionsData = [
-  { id: 1,name:"Notion", amount: 11.95, date: new Date(), type: 1 },
-  { id: 2,name:"Claude Code", amount: 10.98, date: new Date(), type: 1 },
-  { id: 3,name:"Notion", amount: 2.95, date: new Date(), type: -1 },
+  { id: "1", subscriptionId: "", name: "Notion", amount: 11.95, date: new Date() },
+  { id: "2", subscriptionId: "", name: "Claude Code", amount: 10.98, date: new Date() },
+  { id: "3", subscriptionId: "", name: "Notion", amount: 2.95, date: new Date() },
 ];
 
+
+
 export default function Index() {
+  useDrizzleStudio(sqlite)
 
-
-  const db = useSQLiteContext();
-  const drizzleDb = drizzle(db, {schema})
-  useDrizzleStudio(db)
-
-  const [balance, setBalance] = useState<number>(1000.50);
-  const [totalAmount, setTotalAmount] = useState<number>(0)
+  const [transactions, setTransactions] = useState<Transaction[]>()
+  const [balance, setBalance] = useState<number>(0.00);
 
   useEffect( () => {
-    const load = async ()=>{
-      const result = await drizzleDb.query.amount.findFirst()
-      setBalance(result? result.totalAmount : 0);
-    } 
-
-    load()
+    loadTotalAmount().then(setBalance);
+    loadTransaction().then(setTransactions)
 
   }, [])
-  
-
-
-  
-  
-
-
 
   return (
     <View style={styles.root}>
@@ -62,7 +49,7 @@ export default function Index() {
         </View>
 
         <FlatList
-          data={transactionsData}
+          data={transactions}
           renderItem={({ item }) => <TransactionCard transaction={item} />}
           contentContainerStyle={styles.list}
         />

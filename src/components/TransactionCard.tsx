@@ -1,13 +1,7 @@
+import { Transaction } from "@/types/Transaction";
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, View } from "react-native";
 
-interface Transaction {
-  id: number;
-  name: string;
-  amount: number;
-  date: Date;
-  label?: string;
-}
 
 // mappa nome → icona Ionicons
 const iconMap: Record<string, keyof typeof Ionicons.glyphMap> = {
